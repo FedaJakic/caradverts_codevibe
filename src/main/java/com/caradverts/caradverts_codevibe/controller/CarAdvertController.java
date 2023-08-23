@@ -45,11 +45,8 @@ public class CarAdvertController {
     }
 
     @PostMapping("/adverts")
-    public ResponseEntity<List<CarAdvert>> createNewCarAdvert(@RequestBody List<CarAdvert> carAdverts) {
-        List<CarAdvert> savedCarAdverts;
-
-        savedCarAdverts = carAdvertService.createCarAdverts(carAdverts);
-        return new ResponseEntity<>(savedCarAdverts, HttpStatus.OK);
+    public ResponseEntity<CarAdvert> createNewCarAdverts(@RequestBody CarAdvert carAdvert) {
+        return new ResponseEntity<>(carAdvertService.createCarAdvert(carAdvert), HttpStatus.OK);
     }
 
     @PutMapping("/adverts/{id}")

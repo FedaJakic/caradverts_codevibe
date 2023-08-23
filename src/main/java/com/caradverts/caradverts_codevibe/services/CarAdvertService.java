@@ -35,12 +35,11 @@ public class CarAdvertService {
                 .orElseThrow(() -> new EntityNotFoundException());
     }
 
-    public List<CarAdvert> createCarAdverts(List<CarAdvert> carAdverts) {
-        if (carAdverts == null || carAdverts.isEmpty()) {
-            throw new NoSuchElementException("No adverts provided");
-        }
-
-        return carAdvertRepository.saveAll(carAdverts);
+    public CarAdvert createCarAdvert(CarAdvert carAdvert) {
+        if (carAdvertRepository.existsById(carAdvert.getId()))
+            throw new RuntimeException("There is already car advert with given ID");
+        else
+            return carAdvertRepository.save(carAdvert);
     }
 
     public CarAdvert modifyCarAdvert(CarAdvert carAdvert, long id) {
@@ -48,16 +47,21 @@ public class CarAdvertService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "This is returned if a car advert with given id is not found."));
 
-        existingCarAdvert.setTitle(carAdvert.getTitle());
-        existingCarAdvert.setFuelType(carAdvert.getFuelType());
-        existingCarAdvert.setPrice(carAdvert.getPrice());
-        existingCarAdvert.setIsNew(carAdvert.getIsNew());
-        existingCarAdvert.setMileage(carAdvert.getMileage());
-        existingCarAdvert.setFirstRegistration(carAdvert.getFirstRegistration());
+        if (carAdvert.getId() != id) {
+            deleteCarAdvert(id);
+            return createCarAdvert(carAdvert);
+        } else {
+            existingCarAdvert.setTitle(carAdvert.getTitle());
+            existingCarAdvert.setFuelType(carAdvert.getFuelType());
+            existingCarAdvert.setPrice(carAdvert.getPrice());
+            existingCarAdvert.setIsNew(carAdvert.getIsNew());
+            existingCarAdvert.setMileage(carAdvert.getMileage());
+            existingCarAdvert.setFirstRegistration(carAdvert.getFirstRegistration());
 
-        carAdvertRepository.save(existingCarAdvert);
+            carAdvertRepository.save(existingCarAdvert);
 
-        return existingCarAdvert;
+            return existingCarAdvert;
+        }
     }
 
     public void deleteCarAdvert(long id) {

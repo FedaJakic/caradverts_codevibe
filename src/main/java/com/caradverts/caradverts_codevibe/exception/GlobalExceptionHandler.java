@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse(
                         status,
-                        "The server encountered an internal error."),
+                        ex.toString()),
                 status);
     }
 }
