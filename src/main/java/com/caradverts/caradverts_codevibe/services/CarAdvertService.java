@@ -3,6 +3,8 @@ package com.caradverts.caradverts_codevibe.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.caradverts.caradverts_codevibe.model.CarAdvert;
@@ -24,13 +26,21 @@ public class CarAdvertService {
         return carAdvertRepository.findAll();
     }
 
-    public CarAdvert getCarAdvertById(long id) {
-        return carAdvertRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException());
+    public List<CarAdvert> getAllCarAdverts(String sortBy) {
+        return carAdvertRepository.findAll(Sort.by(Direction.DESC, sortBy));
     }
 
-    public CarAdvert createCarAdvert(CarAdvert carAdvert) {
-        return carAdvertRepository.save(carAdvert);
+    public CarAdvert getCarAdvertById(long id) {
+        return carAdvertRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException());
+    }
+
+    public List<CarAdvert> createCarAdverts(List<CarAdvert> carAdverts) {
+        if (carAdverts == null || carAdverts.isEmpty()) {
+            throw new NoSuchElementException("No adverts provided");
+        }
+
+        return carAdvertRepository.saveAll(carAdverts);
     }
 
     public CarAdvert modifyCarAdvert(CarAdvert carAdvert, long id) {
@@ -51,9 +61,9 @@ public class CarAdvertService {
     }
 
     public void deleteCarAdvert(long id) {
-        // carAdvertRepository.findById(id)
-        // .orElseThrow(() -> new ResourceNotFoundEx("CarAdvert", "Id",
-        // Long.toString(id)));
+        carAdvertRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException());
+
         carAdvertRepository.deleteById(id);
     }
 

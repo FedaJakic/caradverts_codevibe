@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.caradverts.caradverts_codevibe.model.CarAdvert;
@@ -28,18 +29,27 @@ public class CarAdvertController {
     }
 
     @GetMapping("/adverts")
-    public List<CarAdvert> allCarAdverts() {
-        return carAdvertService.getAllCarAdverts();
+    public List<CarAdvert> getAllCarAdverts(@RequestParam(value = "sortby", required = false) String sort) {
+        if (sort == null) {
+            return carAdvertService.getAllCarAdverts();
+        } else if (sort.isBlank()) {
+            return carAdvertService.getAllCarAdverts("id");
+        } else {
+            return carAdvertService.getAllCarAdverts(sort.toLowerCase());
+        }
     }
 
     @GetMapping("/adverts/{id}")
-    public ResponseEntity<CarAdvert> carAdvertsById(@PathVariable("id") long carAdvertId) {
+    public ResponseEntity<CarAdvert> getCarAdvertsById(@PathVariable("id") long carAdvertId) {
         return new ResponseEntity<CarAdvert>(carAdvertService.getCarAdvertById(carAdvertId), HttpStatus.OK);
     }
 
     @PostMapping("/adverts")
-    public ResponseEntity<CarAdvert> createNewCarAdvert(@RequestBody CarAdvert carAdvert) {
-        return new ResponseEntity<CarAdvert>(carAdvertService.createCarAdvert(carAdvert), HttpStatus.CREATED);
+    public ResponseEntity<List<CarAdvert>> createNewCarAdvert(@RequestBody List<CarAdvert> carAdverts) {
+        List<CarAdvert> savedCarAdverts;
+
+        savedCarAdverts = carAdvertService.createCarAdverts(carAdverts);
+        return new ResponseEntity<>(savedCarAdverts, HttpStatus.OK);
     }
 
     @PutMapping("/adverts/{id}")
