@@ -1,12 +1,15 @@
 package com.caradverts.caradverts_codevibe.services;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.mapstruct.factory.Mappers;
 
+import com.caradverts.caradverts_codevibe.dto.CarAdvertDTO;
+import com.caradverts.caradverts_codevibe.dto.CarAdvertMapper;
 import com.caradverts.caradverts_codevibe.model.CarAdvert;
 import com.caradverts.caradverts_codevibe.repository.CarAdvertRepository;
 
@@ -16,10 +19,14 @@ import jakarta.persistence.EntityNotFoundException;
 public class CarAdvertService {
 
     private CarAdvertRepository carAdvertRepository;
+    private CarAdvertMapper carAdvertMapper;
 
-    public CarAdvertService(CarAdvertRepository carAdvertRepository) {
+    CarAdvertMapper INSTANCE = Mappers.getMapper(CarAdvertMapper.class);
+
+    public CarAdvertService(CarAdvertRepository carAdvertRepository, CarAdvertMapper carAdvertMapper) {
         super();
         this.carAdvertRepository = carAdvertRepository;
+        this.carAdvertMapper = carAdvertMapper;
     }
 
     public List<CarAdvert> getAllCarAdverts(String sort) {
@@ -44,33 +51,29 @@ public class CarAdvertService {
             return carAdvertRepository.save(carAdvert);
     }
 
-    public CarAdvert modifyCarAdvert(CarAdvert carAdvert, long id) {
-        CarAdvert existingCarAdvert = carAdvertRepository.findById(id)
+    public Optional<CarAdvert> modifyCarAdvert(CarAdvertDTO carAdvertDTO, Long carId) {
+        CarAdvert carAdvert = carAdvertRepository.findById(carId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "This is returned if a car advert with given id is not found."));
 
-        if (carAdvert.getId() != id) {
-            deleteCarAdvert(id);
-            return createCarAdvert(carAdvert);
-        } else {
-            existingCarAdvert.setTitle(carAdvert.getTitle());
-            existingCarAdvert.setFuelType(carAdvert.getFuelType());
-            existingCarAdvert.setPrice(carAdvert.getPrice());
-            existingCarAdvert.setIsNew(carAdvert.getIsNew());
-            existingCarAdvert.setMileage(carAdvert.getMileage());
-            existingCarAdvert.setFirstRegistration(carAdvert.getFirstRegistration());
-
-            carAdvertRepository.save(existingCarAdvert);
-
-            return existingCarAdvert;
+        if (carAdvertDTO.getId() != null && carAdvertDTO.getId() != carId) {
+            if (carAdvertDTO.getId() > 0)
+                carAdvertRepository.deleteById(carId);
+            else
+                throw new RuntimeException("ID must be positive integer!");
         }
+
+        carAdvertMapper.updateCarAdvertFromDto(carAdvertDTO, carAdvert);
+        carAdvertRepository.save(carAdvert);
+        Long newModifiedCarId = carAdvert.getId();
+        return carAdvertRepository.findById(newModifiedCarId);
     }
 
     public void deleteCarAdvert(long id) {
-        carAdvertRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException());
-
-        carAdvertRepository.deleteById(id);
+        if (carAdvertRepository.existsById(id))
+            carAdvertRepository.deleteById(id);
+        else
+            throw new EntityNotFoundException("This is returned if a car advert with given id is not found.");
     }
 
 }

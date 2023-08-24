@@ -1,5 +1,7 @@
 package com.caradverts.caradverts_codevibe.exception;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 
 public class ErrorResponse {
@@ -17,6 +19,13 @@ public class ErrorResponse {
     public ErrorResponse(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
+    }
+
+    public ErrorResponse(HttpStatus status, List<String> messages) {
+        this.status = status;
+        for (String message : messages) {
+            this.message += message + ", ";
+        }
     }
 
     public HttpStatus getStatus() {
