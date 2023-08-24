@@ -59,8 +59,6 @@ public class CarAdvertService {
         if (carAdvertDTO.getId() != null && carAdvertDTO.getId() != carId) {
             if (carAdvertDTO.getId() > 0)
                 carAdvertRepository.deleteById(carId);
-            else
-                throw new RuntimeException("ID must be positive integer!");
         }
 
         carAdvertMapper.updateCarAdvertFromDto(carAdvertDTO, carAdvert);

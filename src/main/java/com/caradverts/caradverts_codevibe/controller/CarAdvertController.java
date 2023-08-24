@@ -43,7 +43,7 @@ public class CarAdvertController {
     }
 
     @PostMapping("/adverts")
-    public ResponseEntity<CarAdvert> createNewCarAdverts(@Valid @RequestBody CarAdvert carAdvert) {
+    public ResponseEntity<CarAdvert> createNewCarAdvert(@Valid @RequestBody CarAdvert carAdvert) {
         return new ResponseEntity<>(carAdvertService.createCarAdvert(carAdvert),
                 HttpStatus.CREATED);
     }
@@ -59,5 +59,4 @@ public class CarAdvertController {
         carAdvertService.deleteCarAdvert(id);
         return new ResponseEntity<String>("Car Advert deleted Successuflly", HttpStatus.NO_CONTENT);
     }
-
 }
