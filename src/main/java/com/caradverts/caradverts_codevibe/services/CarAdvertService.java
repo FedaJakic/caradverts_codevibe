@@ -22,12 +22,14 @@ public class CarAdvertService {
         this.carAdvertRepository = carAdvertRepository;
     }
 
-    public List<CarAdvert> getAllCarAdverts() {
-        return carAdvertRepository.findAll();
-    }
-
-    public List<CarAdvert> getAllCarAdverts(String sortBy) {
-        return carAdvertRepository.findAll(Sort.by(Direction.DESC, sortBy));
+    public List<CarAdvert> getAllCarAdverts(String sort) {
+        if (sort == null) {
+            return carAdvertRepository.findAll();
+        } else if (sort.isBlank()) {
+            return carAdvertRepository.findAll(Sort.by(Direction.DESC, "id"));
+        } else {
+            return carAdvertRepository.findAll(Sort.by(Direction.DESC, sort));
+        }
     }
 
     public CarAdvert getCarAdvertById(long id) {

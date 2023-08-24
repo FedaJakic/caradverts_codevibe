@@ -30,13 +30,14 @@ public class CarAdvertController {
 
     @GetMapping("/adverts")
     public List<CarAdvert> getAllCarAdverts(@RequestParam(value = "sortby", required = false) String sort) {
-        if (sort == null) {
-            return carAdvertService.getAllCarAdverts();
-        } else if (sort.isBlank()) {
-            return carAdvertService.getAllCarAdverts("id");
-        } else {
-            return carAdvertService.getAllCarAdverts(sort.toLowerCase());
-        }
+        // if (sort == null) {
+        // return carAdvertService.getAllCarAdverts();
+        // } else if (sort.isBlank()) {
+        // return carAdvertService.getAllCarAdverts("id");
+        // } else {
+        // return carAdvertService.getAllCarAdverts(sort.toLowerCase());
+        // }
+        return carAdvertService.getAllCarAdverts(sort);
     }
 
     @GetMapping("/adverts/{id}")
