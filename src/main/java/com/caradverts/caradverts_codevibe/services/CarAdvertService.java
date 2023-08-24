@@ -33,9 +33,9 @@ public class CarAdvertService {
         if (sort == null) {
             return carAdvertRepository.findAll();
         } else if (sort.isBlank()) {
-            return carAdvertRepository.findAll(Sort.by(Direction.DESC, "id"));
+            return carAdvertRepository.findAll(Sort.by(Direction.ASC, "id"));
         } else {
-            return carAdvertRepository.findAll(Sort.by(Direction.DESC, sort));
+            return carAdvertRepository.findAll(Sort.by(Direction.ASC, sort));
         }
     }
 
