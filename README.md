@@ -4,7 +4,7 @@
 Technologies:
 - Java
 - Spring Boot framework
-- Any Database as storage of your choice
+- Database: MySql
 
 Task:
 - A RESTful web-service to create, view, modify and delete car adverts. 
